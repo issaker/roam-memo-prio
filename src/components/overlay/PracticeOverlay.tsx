@@ -216,6 +216,7 @@ const PracticeOverlay = ({
     renderMode === RenderMode.AnswerFirst && hasBlockChildrenUids && !showAnswers;
 
   // 🎯 FIXED: 改进showAnswers状态管理，处理子块被删除的情况
+  // 🚀 FLASH FIX: 移除currentIndex依赖，避免卡片切换时的答案闪烁
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log('🔍 [ShowAnswers] 状态检查:', {
@@ -248,7 +249,7 @@ const PracticeOverlay = ({
       }
       refreshBlockInfo();
     }
-  }, [hasBlockChildren, hasBlockChildrenUids, hasCloze, currentIndex, currentCardRefUid, refreshBlockInfo, blockInfo.children?.length]);
+  }, [hasBlockChildren, hasBlockChildrenUids, hasCloze, currentCardRefUid, refreshBlockInfo, blockInfo.children?.length]);
 
   // 🎯 NEW: 当卡片切换时，强制刷新block信息以确保获取最新状态
   React.useEffect(() => {
@@ -310,12 +311,10 @@ const PracticeOverlay = ({
       
       afterPractice();
       
-      // 🚀 FIXED: 回到简单的索引递增
-      // 批量更新状态以避免多次重新渲染
-      asyncUtils.batchUpdate([
-        () => setShowAnswers(false),
-        () => setCurrentIndex(currentIndex + 1)
-      ]);
+      // 🚀 FIXED: 回到简单的索引递增  
+      // 🚀 FLASH FIX: 先切换卡片，让showAnswers状态由新卡片的内容决定
+      setCurrentIndex(currentIndex + 1);
+      // showAnswers状态会由useEffect根据新卡片内容自动设置
     },
     [
       handlePracticeClick,
@@ -331,21 +330,18 @@ const PracticeOverlay = ({
   const onSkipClick = React.useCallback(() => {
     if (isDone) return;
 
-    // 批量更新状态
-    asyncUtils.batchUpdate([
-      () => setShowAnswers(false),
-      () => setCurrentIndex(currentIndex + 1)
-    ]);
+    // 🚀 FLASH FIX: 先切换卡片，让showAnswers状态由新卡片的内容决定
+    // 这样避免了当前卡片的答案闪现
+    setCurrentIndex(currentIndex + 1);
+    // showAnswers状态会由useEffect根据新卡片内容自动设置
   }, [currentIndex, isDone]);
 
   const onPrevClick = React.useCallback(() => {
     if (isFirst) return;
 
-    // 批量更新状态
-    asyncUtils.batchUpdate([
-      () => setShowAnswers(false),
-      () => setCurrentIndex(currentIndex - 1)
-    ]);
+    // 🚀 FLASH FIX: 先切换卡片，让showAnswers状态由新卡片的内容决定
+    setCurrentIndex(currentIndex - 1);
+    // showAnswers状态会由useEffect根据新卡片内容自动设置
   }, [currentIndex, isFirst]);
 
   const onStartCrammingClick = () => {

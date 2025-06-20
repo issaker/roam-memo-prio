@@ -47,7 +47,9 @@ const Footer = ({
   const [activeButtonKey, setActiveButtonKey] = React.useState(null);
   const activateButtonFn = async (key, callbackFn) => {
     setActiveButtonKey(key);
-    await asyncUtils.sleep(100); // 减少延迟从150ms到100ms
+    // 🚀 FLASH FIX: 对跳过操作减少延迟，减少答案闪烁
+    const delay = key === 'skip-button' ? 50 : 100;
+    await asyncUtils.sleep(delay);
     callbackFn();
     setActiveButtonKey(null);
   };
