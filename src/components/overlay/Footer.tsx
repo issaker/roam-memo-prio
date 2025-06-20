@@ -37,6 +37,7 @@ const Footer = ({
   onCloseCallback,
   currentCardData,
   onStartCrammingClick,
+  fsrsEnabled = false,
 }) => {
   const { reviewMode, intervalMultiplier, intervalMultiplierType } = React.useContext(MainContext);
 
@@ -175,7 +176,7 @@ const Footer = ({
       return;
     }
     const grades = [0, 1, 2, 3, 4, 5];
-    const { interval, repetitions, eFactor } = currentCardData;
+    const { interval, repetitions, eFactor, fsrsState } = currentCardData;
     const estimates = {};
 
     const iterateCount = reviewMode === ReviewModes.FixedInterval ? 1 : grades.length;
@@ -186,15 +187,17 @@ const Footer = ({
         interval,
         repetitions,
         eFactor,
+        fsrsState, // 添加FSRS状态
         dateCreated: new Date(),
         reviewMode,
         intervalMultiplier,
         intervalMultiplierType,
+        schedulingAlgorithm: fsrsEnabled ? 'FSRS' : 'SM2',
       });
       estimates[grade] = practiceResultData;
     }
     return estimates;
-  }, [currentCardData, intervalMultiplier, intervalMultiplierType, reviewMode]);
+  }, [currentCardData, intervalMultiplier, intervalMultiplierType, reviewMode, fsrsEnabled]);
 
   return (
     <FooterWrapper

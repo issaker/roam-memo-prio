@@ -1,6 +1,7 @@
 import { savePracticeData } from '~/queries';
 import * as dateUtils from '~/utils/date';
 import { IntervalMultiplierType, ReviewModes, Session } from '~/models/session';
+import { fsrsAlgorithm } from '~/algorithms/fsrs';
 
 export const supermemo = (item, grade) => {
   let nextInterval;
@@ -45,8 +46,9 @@ type PracticeDataResult = Session & {
 export const generatePracticeData = ({
   dateCreated,
   reviewMode,
+  schedulingAlgorithm = 'SM2',
   ...props
-}: Session): PracticeDataResult => {
+}: Session & { schedulingAlgorithm?: 'SM2' | 'FSRS' }): PracticeDataResult => {
   const shared = {
     reviewMode,
   };
@@ -76,25 +78,43 @@ export const generatePracticeData = ({
       nextDueDateFromNow: dateUtils.customFromNow(nextDueDate),
     };
   } else {
-    const { grade, interval, repetitions, eFactor } = props;
-    const supermemoInput = {
-      interval,
-      repetition: repetitions,
-      efactor: eFactor,
-    };
+    const { grade, interval, repetitions, eFactor, fsrsState } = props;
+    
+    let algorithmResults;
+    if (schedulingAlgorithm === 'FSRS') {
+      // 使用FSRS算法
+      console.log('🧠 使用FSRS算法调度');
+      const fsrsInput = {
+        interval,
+        repetition: repetitions,
+        efactor: eFactor,
+        fsrsState,
+      };
+      algorithmResults = fsrsAlgorithm(fsrsInput, grade);
+    } else {
+      // 使用默认SM2算法
+      console.log('🧠 使用SM2算法调度');
+      const supermemoInput = {
+        interval,
+        repetition: repetitions,
+        efactor: eFactor,
+      };
+      algorithmResults = supermemo(supermemoInput, grade);
+    }
 
-    // call supermemo API
-    const supermemoResults = supermemo(supermemoInput, grade);
-
-    const nextDueDate = dateUtils.addDays(dateCreated, supermemoResults.interval);
+    const nextDueDate = dateUtils.addDays(dateCreated, algorithmResults.interval);
 
     return {
       ...shared,
       reviewMode: ReviewModes.DefaultSpacedInterval,
       grade,
-      repetitions: supermemoResults.repetition,
-      interval: supermemoResults.interval,
-      eFactor: supermemoResults.efactor,
+      repetitions: algorithmResults.repetition,
+      interval: algorithmResults.interval,
+      eFactor: algorithmResults.efactor,
+      // 保存FSRS状态（如果使用FSRS）
+      ...(schedulingAlgorithm === 'FSRS' && algorithmResults.fsrsState && {
+        fsrsState: algorithmResults.fsrsState,
+      }),
       dateCreated,
       nextDueDate,
       nextDueDateFromNow: dateUtils.customFromNow(nextDueDate),
@@ -109,7 +129,7 @@ export type PracticeProps = Session & {
   isDryRun?: boolean;
 };
 
-export const practice = async (practiceProps: PracticeProps) => {
+export const practice = async (practiceProps: PracticeProps & { fsrsEnabled?: boolean }) => {
   console.log('🏃‍♂️ Practice called with:', practiceProps);
 
   const {
@@ -125,6 +145,8 @@ export const practice = async (practiceProps: PracticeProps) => {
     repetitions,
     intervalMultiplier,
     intervalMultiplierType,
+    fsrsEnabled = false,
+    fsrsState,
   } = practiceProps;
 
   console.log('🏃‍♂️ Practice mode - grade:', grade, 'isCramming:', isCramming);
@@ -142,6 +164,8 @@ export const practice = async (practiceProps: PracticeProps) => {
     repetitions,
     intervalMultiplier,
     intervalMultiplierType,
+    schedulingAlgorithm: fsrsEnabled ? 'FSRS' : 'SM2',
+    fsrsState,
   });
 
   if (!isDryRun && !isCramming) {

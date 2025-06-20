@@ -162,7 +162,13 @@ const ContentWrapper = styled.div<{
   transition: opacity 0.2s ease-in-out;
 
   & .rm-block-children {
-    display: ${(props) => (props.showAnswers ? 'flex' : 'none')};
+    /* 🚀 FLASH FIX V3: 使用 visibility + opacity 代替 display，避免闪烁 */
+    visibility: ${(props) => (props.showAnswers ? 'visible' : 'hidden')};
+    opacity: ${(props) => (props.showAnswers ? 1 : 0)};
+    height: ${(props) => (props.showAnswers ? 'auto' : '0')};
+    overflow: ${(props) => (props.showAnswers ? 'visible' : 'hidden')};
+    transition: opacity 0.15s ease-in-out, height 0.15s ease-in-out;
+    display: flex; /* 保持 flex 布局，不改变 display */
   }
 
   & .rm-block-separator {
@@ -177,6 +183,8 @@ const ContentWrapper = styled.div<{
     border-radius: 2px;
     padding: 0;
     margin: 0;
+    /* 🚀 FLASH FIX V3: 添加平滑过渡效果 */
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
   }
 `;
 

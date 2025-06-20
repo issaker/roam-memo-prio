@@ -17,6 +17,7 @@ export type Session = {
   grade?: number;
   intervalMultiplier?: number;
   intervalMultiplierType?: IntervalMultiplierType;
+  fsrsState?: any; // FSRS内部状态
 } & SessionCommon;
 
 export interface NewSession extends Omit<Session, 'nextDueDate' | 'grade'> {

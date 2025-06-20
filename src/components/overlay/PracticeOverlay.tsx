@@ -62,6 +62,7 @@ interface Props {
   priorityOrder: string[];
   allCardUids: string[];
   defaultPriority: number;
+  fsrsEnabled: boolean;
 }
 
 const PracticeOverlay = ({
@@ -84,11 +85,49 @@ const PracticeOverlay = ({
   priorityOrder,
   allCardUids,
   defaultPriority,
+  fsrsEnabled,
 }: Props) => {
   const todaySelectedTag = today.tags[selectedTag];
   const newCardsUids = todaySelectedTag.newUids;
   const dueCardsUids = todaySelectedTag.dueUids;
-  const practiceCardUids = [...dueCardsUids, ...newCardsUids];
+  
+  // 🚀 FIXED: 按优先级排名合并队列，而不是简单的due+new顺序
+  const practiceCardUids = React.useMemo(() => {
+    if (priorityOrder.length === 0) {
+      // 如果没有优先级排名，回退到原有逻辑
+      return [...dueCardsUids, ...newCardsUids];
+    }
+    
+    // 合并所有卡片
+    const allCards = [...dueCardsUids, ...newCardsUids];
+    
+    // 按优先级排名排序
+    const sortedCards = allCards.sort((a, b) => {
+      const aIndex = priorityOrder.indexOf(a as string);
+      const bIndex = priorityOrder.indexOf(b as string);
+      
+      // 如果两个都在排名列表中，按排名排序
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      
+      // 排名列表中的卡片优先于不在列表中的卡片
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      
+      // 都不在排名列表中，保持原有顺序
+      return 0;
+    });
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 [队列排序] due卡片:', dueCardsUids);
+      console.log('🎯 [队列排序] new卡片:', newCardsUids); 
+      console.log('🎯 [队列排序] 最终队列:', sortedCards);
+      console.log('🎯 [队列排序] 优先级排名:', priorityOrder);
+    }
+    
+    return sortedCards;
+  }, [dueCardsUids, newCardsUids, priorityOrder]);
   const renderMode = todaySelectedTag.renderMode;
 
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -215,51 +254,24 @@ const PracticeOverlay = ({
   const shouldShowAnswerFirst =
     renderMode === RenderMode.AnswerFirst && hasBlockChildrenUids && !showAnswers;
 
-  // 🎯 FIXED: 改进showAnswers状态管理，处理子块被删除的情况
-  // 🚀 FLASH FIX: 移除currentIndex依赖，避免卡片切换时的答案闪烁
+  // 🚀 FLASH FIX V3: 超简化状态管理 - 卡片切换时总是重置为隐藏状态
   React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 [ShowAnswers] 状态检查:', {
-        currentCardRefUid,
-        hasBlockChildren,
-        hasBlockChildrenUids,
-        hasCloze,
-        '子块数量': blockInfo.children?.length || 0
-      });
-    }
+    // 每次卡片切换都重置为隐藏答案
+    setShowAnswers(false);
+  }, [currentCardRefUid]);
 
-    // 如果既没有子块也没有cloze，直接显示评分按钮
-    if (!hasBlockChildren && !hasBlockChildrenUids && !hasCloze) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔍 [ShowAnswers] 无子块无cloze，直接显示评分按钮');
-      }
-      setShowAnswers(true);
-    } 
-    // 如果有子块或cloze，隐藏答案，显示Show Answer按钮
-    else if (hasBlockChildren || hasBlockChildrenUids || hasCloze) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔍 [ShowAnswers] 有子块或cloze，隐藏答案');
-      }
-      setShowAnswers(false);
-    }
-    // 边界情况：如果状态不明确，刷新block信息
-    else {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔍 [ShowAnswers] 状态不明确，刷新block信息');
-      }
-      refreshBlockInfo();
-    }
-  }, [hasBlockChildren, hasBlockChildrenUids, hasCloze, currentCardRefUid, refreshBlockInfo, blockInfo.children?.length]);
-
-  // 🎯 NEW: 当卡片切换时，强制刷新block信息以确保获取最新状态
+  // 🚀 FLASH FIX V3: 检查是否需要自动显示答案（无子块且无cloze）
   React.useEffect(() => {
-    if (currentCardRefUid) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔍 [BlockInfo] 卡片切换，刷新block信息:', currentCardRefUid);
+    // 只有在所有数据都已加载且确认无子块无cloze时才自动显示答案
+    if (currentCardRefUid && !blockInfoLoading) {
+      const shouldAutoShow = !hasBlockChildren && !hasBlockChildrenUids && !hasCloze;
+      if (shouldAutoShow && !showAnswers) {
+        // 小延迟确保DOM完全渲染
+        const timer = setTimeout(() => setShowAnswers(true), 100);
+        return () => clearTimeout(timer);
       }
-      refreshBlockInfo();
     }
-  }, [currentCardRefUid, refreshBlockInfo]);
+  }, [currentCardRefUid, hasBlockChildren, hasBlockChildrenUids, hasCloze, blockInfoLoading, showAnswers]);
 
   const onTagChange = async (tag) => {
     setCurrentIndex(0);
@@ -311,10 +323,8 @@ const PracticeOverlay = ({
       
       afterPractice();
       
-      // 🚀 FIXED: 回到简单的索引递增  
-      // 🚀 FLASH FIX: 先切换卡片，让showAnswers状态由新卡片的内容决定
+      // 🚀 FLASH FIX V3: 简单的索引递增，状态管理已在useEffect中处理
       setCurrentIndex(currentIndex + 1);
-      // showAnswers状态会由useEffect根据新卡片内容自动设置
     },
     [
       handlePracticeClick,
@@ -330,18 +340,15 @@ const PracticeOverlay = ({
   const onSkipClick = React.useCallback(() => {
     if (isDone) return;
 
-    // 🚀 FLASH FIX: 先切换卡片，让showAnswers状态由新卡片的内容决定
-    // 这样避免了当前卡片的答案闪现
+    // 🚀 FLASH FIX V3: 简单的索引递增，状态管理已在useEffect中处理
     setCurrentIndex(currentIndex + 1);
-    // showAnswers状态会由useEffect根据新卡片内容自动设置
   }, [currentIndex, isDone]);
 
   const onPrevClick = React.useCallback(() => {
     if (isFirst) return;
 
-    // 🚀 FLASH FIX: 先切换卡片，让showAnswers状态由新卡片的内容决定
+    // 🚀 FLASH FIX V3: 简单的索引递减，状态管理已在useEffect中处理
     setCurrentIndex(currentIndex - 1);
-    // showAnswers状态会由useEffect根据新卡片内容自动设置
   }, [currentIndex, isFirst]);
 
   const onStartCrammingClick = () => {
@@ -518,6 +525,7 @@ const PracticeOverlay = ({
           onCloseCallback={onCloseCallback}
           currentCardData={currentCardData}
           onStartCrammingClick={onStartCrammingClick}
+          fsrsEnabled={fsrsEnabled}
         />
         {/* Priority Slider - only show when we have cards and are not done */}
         {shouldShowSlider && (
