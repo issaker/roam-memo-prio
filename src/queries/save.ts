@@ -59,6 +59,9 @@ export const savePracticeData = async ({ refUid, dataPageTitle, dateCreated, ...
     let value = data[key];
     if (key === 'nextDueDate') {
       value = `[[${stringUtils.dateToRoamDateString(nextDueDate)}]]`;
+    } else if (key === 'fsrsState' && typeof value === 'object' && value !== null) {
+      // 序列化FSRS状态对象为JSON字符串
+      value = JSON.stringify(value);
     }
 
     await createChildBlock(newDataBlockId, `${key}:: ${value}`, -1);
@@ -147,6 +150,9 @@ export const bulkSavePracticeData = async ({
         if (key === 'dateCreated') continue; // no need to store this
         if (key === 'nextDueDate') {
           value = `[[${stringUtils.dateToRoamDateString(value)}]]`;
+        } else if (key === 'fsrsState' && typeof value === 'object' && value !== null) {
+          // 序列化FSRS状态对象为JSON字符串
+          value = JSON.stringify(value);
         }
         payload.data.actions.push({
           action: 'create-block',

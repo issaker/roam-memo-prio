@@ -30,6 +30,18 @@ const settingsPanelConfig = ({ settings, setSettings }) => {
         },
       },
       {
+        id: 'fsrsEnabled',
+        name: 'Enable FSRS Algorithm/启用FSRS算法',
+        description: 'Enable the modern FSRS algorithm instead of SM2. FSRS provides better long-term retention prediction. \n你可以开启FSRS提供机器学习训练的高级算法。默认SM2 经典算法，让学习压力更小。',
+        action: {
+          type: 'switch',
+          checked: settings.fsrsEnabled,
+          onChange: (e) => {
+            processChange({ key: 'fsrsEnabled', value: e.target.checked });
+          },
+        },
+      },
+      {
         id: 'migrate-roam-sr-data',
         name: 'Migrate Roam/Sr Data',
         description: 'A tool to import your Roam/Sr data into Memo.',
@@ -72,6 +84,7 @@ const settingsPanelConfig = ({ settings, setSettings }) => {
         description: 'Enable RTL for languages like Arabic, Hebrew, etc.',
         action: {
           type: 'switch',
+          checked: settings.rtlEnabled,
           onChange: (e) => {
             processChange({ key: 'rtlEnabled', value: e.target.checked });
           },
@@ -83,6 +96,7 @@ const settingsPanelConfig = ({ settings, setSettings }) => {
         description: 'Randomly shuffle the order of new and due cards during review.',
         action: {
           type: 'switch',
+          checked: settings.shuffleCards,
           onChange: (e) => {
             processChange({ key: 'shuffleCards', value: e.target.checked });
           },

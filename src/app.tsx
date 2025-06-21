@@ -26,7 +26,7 @@ const App = () => {
   const [showPracticeOverlay, setShowPracticeOverlay] = React.useState(false);
   const [isCramming, setIsCramming] = React.useState(false);
 
-  const { tagsListString, dataPageTitle, dailyLimit, rtlEnabled, shuffleCards, defaultPriority } = useSettings();
+  const { tagsListString, dataPageTitle, dailyLimit, rtlEnabled, shuffleCards, defaultPriority, fsrsEnabled } = useSettings();
   const { selectedTag, setSelectedTag, tagsList } = useTags({ tagsListString });
 
   const { fetchCacheData, saveCacheData, data: cachedData } = useCachedData({ dataPageTitle });
@@ -55,6 +55,7 @@ const App = () => {
         dateCreated: new Date(),
         refUid,
         isCramming,
+        fsrsEnabled, // 传递算法选择
       };
       
       await practice(practiceParams);
@@ -150,6 +151,7 @@ const App = () => {
             priorityOrder={priorityOrder}
             allCardUids={allCardUids}
             defaultPriority={defaultPriority}
+            fsrsEnabled={fsrsEnabled}
           />
         )}
       </>

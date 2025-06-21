@@ -8,6 +8,7 @@ export type Settings = {
   rtlEnabled: boolean;
   shuffleCards: boolean;
   defaultPriority: number;
+  fsrsEnabled: boolean;
 };
 
 export const defaultSettings: Settings = {
@@ -17,6 +18,7 @@ export const defaultSettings: Settings = {
   rtlEnabled: false,
   shuffleCards: false,
   defaultPriority: 70,
+  fsrsEnabled: false,
 };
 
 // @TODO: Refactor/Hoist this so we can call useSettings in multiple places
@@ -45,11 +47,25 @@ const useSettings = () => {
 
   React.useEffect(() => {
     const allSettings = window.roamMemo.extensionAPI.settings.getAll() || {};
+    
     // Manually set shuffleCards to true if it doesn't exist. Reason: Can't
     // figure out how to make the switch UI default to on so let's just set it
     // to true here unless toggled off
     if (!('shuffleCards' in allSettings)) {
       window.roamMemo.extensionAPI.settings.set('shuffleCards', defaultSettings.shuffleCards);
+    }
+    
+    // 迁移旧的schedulingAlgorithm设置到新的fsrsEnabled布尔值
+    if ('schedulingAlgorithm' in allSettings && !('fsrsEnabled' in allSettings)) {
+      const fsrsEnabled = allSettings.schedulingAlgorithm === 'FSRS';
+      window.roamMemo.extensionAPI.settings.set('fsrsEnabled', fsrsEnabled);
+      // 可以选择删除旧设置：
+      // window.roamMemo.extensionAPI.settings.remove('schedulingAlgorithm');
+    }
+    
+    // 确保fsrsEnabled有默认值
+    if (!('fsrsEnabled' in allSettings)) {
+      window.roamMemo.extensionAPI.settings.set('fsrsEnabled', defaultSettings.fsrsEnabled);
     }
 
     // For some reason the getAll() method casts numbers to strings, so here we
