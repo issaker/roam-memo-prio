@@ -6,9 +6,6 @@ interface PrioritySliderProps {
   onPriorityChange: (newRank: number) => void; // 排名变更回调
   disabled: boolean;
   allCardsCount: number; // 总卡片数
-  currentQueueRank?: number; // 当前队列中的排名
-  currentQueueSize?: number; // 当前队列的总卡片数
-  currentQueueName?: string; // 当前队列名称（标签名）
 }
 
 const PriorityContainer = styled.div`
@@ -106,9 +103,6 @@ const PrioritySlider: React.FC<PrioritySliderProps> = ({
   onPriorityChange, 
   disabled,
   allCardsCount,
-  currentQueueRank,
-  currentQueueSize,
-  currentQueueName
 }) => {
   // 滑块值到排名的转换（左侧=低优先级，右侧=高优先级）
   const sliderValueToRank = React.useCallback((sliderValue: number, totalCards: number) => {
@@ -177,16 +171,6 @@ const PrioritySlider: React.FC<PrioritySliderProps> = ({
             当前总排名：第{priority}名
             {allCardsCount > 0 && ` / 共${allCardsCount}张卡片`}
           </span>
-          {currentQueueRank && currentQueueSize && currentQueueName && (
-            <span style={{ 
-              fontSize: '11px', 
-              color: '#3498db', 
-              marginTop: '2px',
-              fontWeight: 'bold'
-            }}>
-              在 {currentQueueName} 队列中：第{currentQueueRank}名 / 共{currentQueueSize}张
-            </span>
-          )}
         </div>
         <span>高优先级（第1名）</span>
       </div>
