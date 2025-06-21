@@ -1,141 +1,150 @@
 # Memo Enhanced - 优化版间隔重复插件
 
-> 基于 [digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo) 的增强版本
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/1279335/189250105-656e6ba3-7703-46e6-bc71-ee8c5f3e39ab.gif" alt="Demo Preview" width="600">
+</p>
 
-### 🎯 优化改进
+> 🙏 **致谢**：本项目基于 [digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo) 开发，感谢原作者 [@digitalmaster](https://github.com/digitalmaster) 的杰出工作！
 
-- **优先级滑块可拖拽** - 重新设计CSS样式，支持所有浏览器拖拽操作
-- **协同排名系统** - 统一优先级数据源，避免重复`priority:: 0`记录
-- **批量保存优化** - 减少70%不必要的数据保存操作，提升性能
-- **React错误修复** - 解决无限循环和状态更新问题
-- **数据流优化** - 统一使用`priority-ranking::`协同排名列表
-- **🧠 调度算法选择器** - 支持SM2和FSRS算法切换，提供更好的记忆预测
+一个专为 Roam Research 设计的强化版间隔重复插件。类似于 [Anki](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)，采用科学的记忆算法帮助你高效记忆任何内容。
+y
+## ✨ 新增功能亮点
 
-### 🧠 新功能：调度算法选择器
+### 🎯 性能与体验优化
+- **🖱️ 优先级滑块可拖拽** - 重新设计CSS样式，支持所有浏览器的流畅拖拽操作
+- **🔄 全局排名系统** - 统一优先级数据源，让你的知识优先级全局保持一致性，而不仅限于牌组内部。
+- **⚡ 批量保存优化** - 减少70%不必要的数据保存操作，显著提升插件性能
+- **📊 数据流优化** - 统一使用`priority-ranking::`协同排名列表，数据管理更高效
 
-在设置页面中新增了**调度算法选择器**，用户可以在两种算法之间选择：
+### 🧠 智能调度算法选择器
 
-#### SM2 算法（默认）
-- 基于SuperMemo 2算法的改良版本
-- 已在插件中使用多年，稳定可靠
-- 适合大多数用户的学习需求
+插件现在支持两种先进的记忆算法，让你的学习更科学！
 
-#### FSRS 算法（新算法）
-- Free Spaced Repetition Scheduler
-- 基于机器学习的现代算法
-- 提供更准确的长期记忆预测
-- 在科学研究中证明优于传统算法
+#### 📖 SM2 算法（经典稳定）
+- 基于 [SuperMemo 2](https://super-memory.com/english/ol/sm2.htm) 算法的改良版本
+- 经过多年验证，稳定可靠
+- 适合大多数用户的日常学习需求
 
-**如何使用：**
+#### 🚀 FSRS 算法（现代AI）
+- **Free Spaced Repetition Scheduler** - 基于机器学习的现代算法
+- 提供更准确的长期记忆预测和复习时间安排
+- 在最新科学研究中证明优于传统算法
+
+**💡 使用方法：**
 1. 打开插件设置页面
 2. 找到"调度算法选择 / Scheduling Algorithm"选项
-3. 选择SM2或FSRS算法
+3. 用开关选择是否开启FSRS 算法，不开启默认 SM2 算法
 4. 新建卡片将使用选择的算法
-5. 现有卡片保持兼容，可无缝切换
+5. 现有卡片保持完全兼容，可无缝切换
 
-**注意事项：**
-- 算法切换对现有数据完全兼容
-- FSRS算法会在卡片数据中额外保存内部状态
-- 建议新用户可以尝试FSRS获得更好的学习效果
+## 📦 安装方法
 
-### 📦 安装方法
+在 Roam Research 的扩展页面roam deport中打开开发者模式，添加以下地址：
 
-**在Roam Research扩展页面添加：**
 ```
 https://raw.githubusercontent.com/issaker/roam-memo-prio/main/extension.js
 ```
 
----
+**安装步骤：**
+1. 打开 Roam Research
+2. 点击右上角设置图标 → Settings
+3. 选择 "Roam deport" 标签页
+4. 在 "Developer Extensions" 中打开链接图标按钮，粘贴上述地址
+5. 点击 "load remote extension" 按钮
+6. 重新加载页面完成安装
 
-# Memo - Spaced Repetition for Roam
+## 🚀 快速开始
 
-Memorize anything with this simple spaced repetition plugin for Roam. Similar to [Anki](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html), it uses a modified version of the [SuperMemo 2](https://super-memory.com/english/ol/sm2.htm) (SM2) Algorithm under the hood.
+1. **创建卡片**：为任何想要记忆的块添加 `#memo` 标签（或自定义标签）
+2. **开始复习**：点击roamresearch侧边栏的 "Review" 按钮启动学习
+3. **智能复习**：根据记忆算法安排的时间复习闪卡
 
-![Demo Preview](https://user-images.githubusercontent.com/1279335/189250105-656e6ba3-7703-46e6-bc71-ee8c5f3e39ab.gif)
+> **💡 小贴士**：子块被视为"答案"，初始状态隐藏。点击"显示答案"来查看它们。
 
-## What is "Spaced Repetition"?
+## 📚 核心功能
 
-Spaced repetition is a study technique where you review information based on how well you remember it. Instead of reviewing all cards equally, you focus more on difficult cards and less on easy ones. This method helps you reinforce material that needs more attention, saving time on reviewing familiar content.
+### 🎯 什么是间隔重复？
 
-It's the most effective method for transferring a large amount of knowledge from short-term to long-term memory.
+间隔重复是一种基于记忆规律的学习技术：
+- 根据你的记忆程度智能安排复习时间
+- 难记的内容增加复习频率，熟悉的内容延长间隔
+- 这是将大量知识从短期记忆转化为长期记忆最有效的方法
 
-## Installation
+### 🗂️ 多卡组支持
 
-Just install "Memo" via Roam Depot.
+通过插件设置创建多个学习卡组：
+- 在"标签页面"字段中输入逗号分隔的标签列表
+- 例如：`西班牙语, 法语, 编程` 为不同学科建立独立卡组
 
-## Getting Started
+> **提示**：标签名称包含逗号时，请用引号包围，如 `"页面, 带逗号"`
 
-1. Tag any block you wish to memorize with `#memo` (or any of your configured tags).
-2. Launch the app by clicking the "Review" button in the sidebar.
-3. Start reviewing the flashcards.
+### 🎭 文本遮挡（填空练习）
 
-> **Tip:** Child blocks are treated as "answers" and are initially hidden. Click "Show Answer" to reveal them.
+挑战你的记忆力，隐藏文本的关键部分，变成填空题：
+- Roam 快捷键 Ctrl+H 高亮功能，使用 `^^` 包围文本：`^^隐藏我^^`
+- 或使用大括号：`{我也被隐藏}`
+- 注意：如果你不是 Roam 的默认 css 主题，可能会出现挖空遮挡失效的情况。
 
-## Features
+### 📊 每日限制
 
-### Multi Deck Support
+设置每日复习限制来控制学习时间：
+- 在插件设置页面配置每日复习卡片上限
+- 系统确保至少 ~25% 的卡片是新卡片，保持学习平衡
 
-Create multiple decks by navigating to the plugin settings and entering a comma-separated list of tags in the "Tag Pages" field. For example, use `Spanish, French` to establish decks for each language you're learning.
+### 🎓 强化模式
 
-> **Tip:** For tags names that contain commas, enclose them in quotes, e.g., "Page, with Comma".
+完成当日到期卡片后，可选择继续"强化模式"：
+- 复习卡组中的所有卡片，无论是否到期
+- 适合考试冲刺，不影响正常的间隔重复调度
+- 该模式可以修改和保存你的卡片优先级
 
-### Text Masking
+### ⌨️ 键盘快捷键
 
-Text masking, or Cloze Deletion, challenges your recall by hiding parts of the text. Apply text masking by:
+| 操作 | 快捷键 |
+|------|--------|
+| 显示答案 | `空格` |
+| 跳过卡片 | `s` 或 `→` |
+| 返回上一张 | `←` |
+| 显示面包屑 | `b` |
+| 评分：完美记住 | `空格` |
+| 评分：完全忘记 | `f` |
+| 评分：有点困难 | `h` |
+| 评分：表现良好 | `g` |
 
-- Enclosing the desired text with `^^`, e.g., `^^hide me^^`.
-- Or, using braces `{}`, e.g., `{hide me too}`.
+### 🎨 命令面板集成
 
-### Daily Limits
+通过命令面板快速启动：`CMD + P` → 输入 "Memo: Start Review Session"
 
-You can set a daily review limit. This is useful if you want to limit the time you spend reviewing cards. We ensure at least ~25% of cards are new cards to keep things balanced.
+### 🔄 RoamSr 数据迁移
 
-You can set the daily limit in the plugin settings page.
+从旧版 RoamSr 插件无缝迁移数据：
 
-### Cram Mode
-
-When you're done reviewing all due cards in a deck you can choose to continue in "Cram Mode". This will let you review all the cards in the deck regardless of when they are due. This is useful if you're studying for an exam and can't wait for the cards to become due. Reviewing cards in this mode do not affect spaced reptition scheduling.
-
-### Keyboard Shortcuts
-
-| Action                | Shortcut   |
-| --------------------- | ---------- |
-| Show answer           | `space`    |
-| Skip a card           | `s` or `→` |
-| Go back               | `←`        |
-| Show breadcrumbs      | `b`        |
-| Grade: perfect        | `space`    |
-| Grade: forgot it      | `f`        |
-| Grade: If it was hard | `h`        |
-| Grade: If it was good | `g`        |
-
-### Command Palette Action
-
-You can start a review session from the command palette (`CMD + P`) by typing "Memo: Start Review Session".
-
-### RoamSr Migration Tool
-
-To migrate your data from the old RoamSr plugin follow these steps:
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=-vTHVknIdX4" target="_blank">
-<img src="https://user-images.githubusercontent.com/1279335/220912625-f4cc5ab7-fbf1-4d86-8934-e635ac85ee7b.png" alt="Watch Video Walkthrough" />
+<img src="https://user-images.githubusercontent.com/1279335/220912625-f4cc5ab7-fbf1-4d86-8934-e635ac85ee7b.png" alt="观看视频教程" width="400"/>
 </a>
 
-> Note: To be extra safe, I recommend you make a backup of your #roam/memo page before migrating.
+**迁移步骤：**
+1. 按照 [此指南](https://roamresearch.com/#/app/developer-documentation/page/bmYYKQ4vf) 生成具有写入权限的 API 密钥
+2. 进入插件设置页面，点击"迁移 Roam/Sr 数据"部分的"启动"按钮
+3. 输入 API 密钥并点击"获取预览数据"
+4. 检查数据，旧的 roam/sr 数据应显示在表格中
+5. 确认无误后点击"导入"
 
-1. Generate an API key with write access by following these instructions [here](https://roamresearch.com/#/app/developer-documentation/page/bmYYKQ4vf).
-2. Go to the settings page of the plugin and click on the "Launch" button under the "Migrate Roam/Sr Data" section.
-3. Enter API key and press "Fetch Preview Data"
-4. Review the data. All your old roam/sr data should be displayed in the table. New records should be merged with old ones.
-5. If everything looks good, press "Import"
+> **⚠️ 注意**：建议在迁移前备份你的 #roam/memo 页面。如果数据量大，同步可能需要一些时间。
 
-> If you have a lot of data, it might take a while to sync. So go grab coffee.
+## 🐛 问题反馈与功能建议
 
-## Bug Reports and Feature Requests
+如有任何问题或建议，请在 [Issues 页面](https://github.com/issaker/roam-memo-prio/issues) 提交，我们会尽快处理！
 
-Please create issues [here](https://github.com/digitalmaster/roam-memo/issues) and I'll get to them as soon as I can.
+## 🎉 致谢与支持
+
+**🙏 特别感谢**：
+- 原作者 [@digitalmaster](https://github.com/digitalmaster) 创建了这个出色的插件
+- 原项目地址：[digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo)
+- 支持原作者：[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H0YPGK)
+
+**📄 开源协议**：MIT License
 
 ---
 
-I built this primarily because I wanted it to exist. That said, it brings me great joy to see so many of you finding it useful too 🤓🥰
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H0YPGK)
+*让学习变得更科学、更高效！🚀*
