@@ -149,7 +149,7 @@ https://raw.githubusercontent.com/issaker/roam-memo-prio/main/extension.js
 
 如果这个插件对你有帮助，欢迎支持项目的持续发展！
 
-[![爱发电](https://img.shields.io/badge/爱发电-支持开发-ff6b6b?style=for-the-badge&logo=heart&logoColor=white)](https://ifdian.net/item/185914144ecb11f0abea52540025c377)
+[**💖 爱发电支持开发**](https://ifdian.net/item/185914144ecb11f0abea52540025c377)
 
 **你的每一份支持都是推动项目发展的动力！** ✨
 
