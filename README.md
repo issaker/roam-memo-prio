@@ -166,9 +166,11 @@ https://raw.githubusercontent.com/issaker/roam-memo-prio/main/extension.js
 ☁️ 服务器运行与维护成本
 📚 用户文档与教程制作
 🐛 bug修复与技术支持
+</div>
 
 ## 🎉 致谢与支持
-
+<div align="center">
+  
 **🙏 特别感谢**：<br/>
 原作者 [@digitalmaster](https://github.com/digitalmaster) 创建了这个出色的插件<br/>
 原项目地址：[digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo)<br/>
