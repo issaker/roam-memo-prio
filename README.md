@@ -2,23 +2,13 @@
 
 > 基于 [digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo) 的增强版本
 
-## 🎯 优化改进
+### 🎯 优化改进
 
-### ✅ 已修复的问题
 - **优先级滑块可拖拽** - 重新设计CSS样式，支持所有浏览器拖拽操作
-- **协同排名系统** - 统一优先级数据源，避免重复`priority:: 0`记录
-- **批量保存优化** - 减少70%不必要的数据保存操作，提升性能
-- **React错误修复** - 解决无限循环和状态更新问题
-- **数据流优化** - 统一使用`priority-ranking::`协同排名列表
 - **🧠 调度算法选择器** - 支持SM2和FSRS算法切换，提供更好的记忆预测
 - **全局优先级系统** - 统一优先级数据源，实现全局优先级而非单独牌组排序
-- **FSRS 算法切换** - 更先进的机器学习算法，长期主义佛系刷卡必备
 
-### 🚀 性能提升
-- 移除冗余的单张卡片优先级保存
-- 优化useEffect依赖，避免重复执行
-- 生产环境调试日志优化
-- 内存泄漏修复
+
 
 ### 🧠 新功能：调度算法选择器
 
@@ -50,11 +40,6 @@
 ### 📦 安装方法
 
 **在Roam Research扩展页面添加：**
-```
-https://github.com/issaker/roam-memo-prio
-```
-
-**或使用直接链接：**
 ```
 https://raw.githubusercontent.com/issaker/roam-memo-prio/main/extension.js
 ```
