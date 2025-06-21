@@ -19,7 +19,7 @@ data (heading 3)
 
 ```
 data (heading 3)
-├── Priority Rankings (heading 4)  <-- 新增的容器block
+├── **Priority Rankings**  <-- 新增的容器block（粗体格式）
 │   └── priority-ranking:: ((uid1)),((uid2)),((uid3))  <-- 被包含在容器中
 └── ((card_uid))
     └── [[date]] emoji
@@ -33,19 +33,21 @@ data (heading 3)
 2. **页面更整洁**: 避免密密麻麻的数据字段直接暴露在data block下
 3. **可折叠性**: 容器block可以折叠，隐藏详细的排名数据
 4. **易于维护**: 所有排名相关的数据都集中在一个位置
+5. **更好兼容性**: 使用普通block + 粗体，避免标题级别兼容性问题
 
 ## 技术实现
 
 ### 修改的函数
 
-- `loadCardRankings()`: 现在在"Priority Rankings"容器中查找数据
-- `saveCardRankings()`: 现在将数据保存到"Priority Rankings"容器中
+- `loadCardRankings()`: 现在在"**Priority Rankings**"容器中查找数据
+- `saveCardRankings()`: 现在将数据保存到"**Priority Rankings**"容器中
 
 ### 容器特性
 
-- **标题级别**: 4级标题 (heading 4)
+- **格式**: 普通block，使用粗体文本 `**Priority Rankings**`
 - **位置**: 位于data block的最前面 (order: 0)
 - **默认状态**: 折叠状态 (open: false)
+- **兼容性**: 不依赖标题功能，在所有Roam Research版本中都能正常工作
 
 ## 向后兼容性
 
@@ -57,7 +59,7 @@ data (heading 3)
 
 ```
 ### data
-#### Priority Rankings
+**Priority Rankings**
     priority-ranking:: ((card1)),((card2)),((card3))
 ((actual_card_ref))
     [[June 21st, 2024]] 🟢
@@ -66,4 +68,4 @@ data (heading 3)
         ...
 ```
 
-这样用户可以专注于查看实际的卡片数据，而排名信息被整齐地收纳在专门的容器中。 
+这样用户可以专注于查看实际的卡片数据，而排名信息被整齐地收纳在粗体标识的专门容器中。 

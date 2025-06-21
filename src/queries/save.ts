@@ -196,8 +196,8 @@ export const loadCardRankings = async ({
       heading: 3,
     });
 
-    // 查找"Priority Rankings"容器block
-    const priorityContainerUid = getChildBlock(dataBlockUid, 'Priority Rankings');
+    // 查找"**Priority Rankings**"容器block
+    const priorityContainerUid = getChildBlock(dataBlockUid, '**Priority Rankings**');
     if (!priorityContainerUid) return [];
 
     // 在容器中查找priority-ranking数据
@@ -253,11 +253,11 @@ export const saveCardRankings = async ({
     // 获取或创建"Priority Rankings"容器block
     const priorityContainerUid = await getOrCreateChildBlock(
       dataBlockUid, 
-      'Priority Rankings', 
+      '**Priority Rankings**', // 使用粗体格式标识
       0, // 放在data block的最前面
       { 
         open: false,
-        heading: 4, // 使用4级标题，比data block(3级)低一级
+        // 移除heading属性，使用普通block
       }
     );
 
