@@ -199,6 +199,24 @@ const PracticeOverlay = ({
     return rank;
   }, [currentCardRefUid, priorityOrder, allCardsCount, rankingChanges, defaultPriority]);
 
+  // 🎯 计算当前队列排名信息
+  const { currentQueueRank, currentQueueSize } = React.useMemo(() => {
+    if (!currentCardRefUid || practiceCardUids.length === 0) {
+      return { currentQueueRank: undefined, currentQueueSize: undefined };
+    }
+    
+    // 计算当前卡片在当前队列中的位置
+    const queueIndex = practiceCardUids.indexOf(currentCardRefUid);
+    if (queueIndex === -1) {
+      return { currentQueueRank: undefined, currentQueueSize: practiceCardUids.length };
+    }
+    
+    return {
+      currentQueueRank: queueIndex + 1, // 排名从1开始
+      currentQueueSize: practiceCardUids.length
+    };
+  }, [currentCardRefUid, practiceCardUids]);
+
   // 🚀 DEBUG: 添加调试信息 (仅在开发环境)
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
@@ -534,6 +552,9 @@ const PracticeOverlay = ({
             onPriorityChange={handleRankingChange}
             disabled={false}
             allCardsCount={allCardsCount}
+            currentQueueRank={currentQueueRank}
+            currentQueueSize={currentQueueSize}
+            currentQueueName={selectedTag}
           />
         )}
       </Dialog>
