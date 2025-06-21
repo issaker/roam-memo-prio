@@ -19,7 +19,7 @@ data (heading 3)
 
 ```
 data (heading 3)
-├── Priority Rankings (heading 6)  <-- 新增的容器block
+├── Priority Rankings (heading 4)  <-- 新增的容器block
 │   └── priority-ranking:: ((uid1)),((uid2)),((uid3))  <-- 被包含在容器中
 └── ((card_uid))
     └── [[date]] emoji
@@ -43,7 +43,7 @@ data (heading 3)
 
 ### 容器特性
 
-- **标题级别**: 6级标题 (heading 6)
+- **标题级别**: 4级标题 (heading 4)
 - **位置**: 位于data block的最前面 (order: 0)
 - **默认状态**: 折叠状态 (open: false)
 
@@ -57,7 +57,7 @@ data (heading 3)
 
 ```
 ### data
-###### Priority Rankings
+#### Priority Rankings
     priority-ranking:: ((card1)),((card2)),((card3))
 ((actual_card_ref))
     [[June 21st, 2024]] 🟢

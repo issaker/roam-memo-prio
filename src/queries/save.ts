@@ -257,7 +257,7 @@ export const saveCardRankings = async ({
       0, // 放在data block的最前面
       { 
         open: false,
-        heading: 6, // 设置为6级标题，使其稍微突出
+        heading: 4, // 使用4级标题，比data block(3级)低一级
       }
     );
 
