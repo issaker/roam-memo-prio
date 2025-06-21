@@ -13,7 +13,7 @@ const settingsPanelConfig = ({ settings, setSettings }) => {
   const processChange = asyncUtils.debounce((e) => syncFn(e));
 
   return {
-    tabTitle: 'Memo',
+    tabTitle: 'Memo Enhanced',
     settings: [
       {
         id: 'tagsListString',
@@ -44,7 +44,7 @@ const settingsPanelConfig = ({ settings, setSettings }) => {
       {
         id: 'migrate-roam-sr-data',
         name: 'Migrate Roam/Sr Data',
-        description: 'A tool to import your Roam/Sr data into Memo.',
+        description: 'A tool to import your Roam/Sr data into Memo Enhanced.',
         action: {
           type: 'reactComponent',
           component: () => <RoamSrImportPanel dataPageTitle={settings.dataPageTitle} />,

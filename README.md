@@ -4,7 +4,7 @@
   <img src="https://user-images.githubusercontent.com/1279335/189250105-656e6ba3-7703-46e6-bc71-ee8c5f3e39ab.gif" alt="Demo Preview" width="600">
 </p>
 
-> 🙏 **致谢**：本项目基于 [digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo) 开发，感谢原作者 [@digitalmaster](https://github.com/digitalmaster) 的杰出工作！
+> 🙏 **致谢**：本项目基于 [digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo) 开发，感谢原作者 [@digitalmaster](https://github.com/digitalmaster) 的杰出工作！同时特别感谢 [L-M-Sherlock (Jarrett Ye)](https://github.com/L-M-Sherlock) 老师对渐进阅读学习原理和方法的无私推广，受益匪浅。
 
 一个专为 Roam Research 设计的强化版间隔重复插件。类似于 [Anki](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)，采用科学的记忆算法帮助你高效记忆任何内容。
 y
@@ -35,7 +35,9 @@ y
 2. 找到"调度算法选择 / Scheduling Algorithm"选项
 3. 用开关选择是否开启FSRS 算法，不开启默认 SM2 算法
 4. 新建卡片将使用选择的算法
-5. 现有卡片保持完全兼容，可无缝切换
+5. 注意算法彼此数据暂不互通，切换算法不会破坏彼此的历史数据。
+
+> **🔄 复习模式切换**：练习时右下角的 `AUTO ⇄ FIX` 开关用于切换复习模式，与SM2/FSRS算法选择无关。
 
 ## 📦 安装方法
 
@@ -100,16 +102,21 @@ https://raw.githubusercontent.com/issaker/roam-memo-prio/main/extension.js
 
 ### ⌨️ 键盘快捷键
 
-| 操作 | 快捷键 |
-|------|--------|
-| 显示答案 | `空格` |
-| 跳过卡片 | `s` 或 `→` |
-| 返回上一张 | `←` |
-| 显示面包屑 | `b` |
-| 评分：完美记住 | `空格` |
-| 评分：完全忘记 | `f` |
-| 评分：有点困难 | `h` |
-| 评分：表现良好 | `g` |
+| 操作 | 快捷键 | 助记说明 |
+|------|--------|----------|
+| 显示答案 | `空格` | Space (显示) |
+| 跳过当前卡片 | `s` 或 `→` | **S**kip (跳过) |
+| 返回上一张 | `←` | 左箭头 (返回) |
+| 显示面包屑 | `b` | **B**readcrumb (面包屑) |
+| 评分：完美记住 | `空格` | Space (完美) |
+| 评分：完全忘记 | `x` | ❌ (忘记标记) |
+| 评分：有点困难 | `h` | **H**ard (困难) |
+| 评分：表现良好 | `g` | **G**ood (良好) |
+
+> **📝 重要说明**：
+> - 快捷键 `x` 与算法名称 FSRS **完全无关**，仅用于标记忘记！
+> - 算法切换请到插件设置页面的"调度算法选择"选项
+> - 练习界面的 `AUTO ⇄ FIX` 开关是复习模式切换，不是算法切换
 
 ### 🎨 命令面板集成
 
@@ -136,12 +143,31 @@ https://raw.githubusercontent.com/issaker/roam-memo-prio/main/extension.js
 
 如有任何问题或建议，请在 [Issues 页面](https://github.com/issaker/roam-memo-prio/issues) 提交，我们会尽快处理！
 
+## 💖 支持项目发展
+
+<div align="center">
+
+如果这个插件对你有帮助，欢迎支持项目的持续发展！
+
+[![爱发电](https://img.shields.io/badge/爱发电-支持开发-ff6b6b?style=for-the-badge&logo=heart&logoColor=white)](https://ifdian.net/item/185914144ecb11f0abea52540025c377)
+
+**你的每一份支持都是推动项目发展的动力！** ✨
+
+📈 支持资金将用于：
+- 🔧 持续的功能开发与优化  
+- ☁️ 服务器运行与维护成本
+- 📚 用户文档与教程制作
+- 🐛 bug修复与技术支持
+
 ## 🎉 致谢与支持
 
 **🙏 特别感谢**：
 - 原作者 [@digitalmaster](https://github.com/digitalmaster) 创建了这个出色的插件
 - 原项目地址：[digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo)
 - 支持原作者：[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H0YPGK)
+- 感谢 [L-M-Sherlock (Jarrett Ye)](https://github.com/L-M-Sherlock) 老师对渐进阅读学习原理和方法的无私推广，让更多人受益
+
+</div>
 
 **📄 开源协议**：MIT License
 

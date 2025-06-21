@@ -45,7 +45,7 @@ function onunload() {
     const { roamFocusManager } = require('./utils/roamFocusManager');
     roamFocusManager.forceCleanup();
   } catch (error) {
-    console.error('🎯 Roam Memo: 清理焦点管理器失败:', error);
+          console.error('🎯 Memo Enhanced: 清理焦点管理器失败:', error);
   }
 
   // 直接导入并清理层级管理器，移除注入的CSS样式
@@ -53,7 +53,7 @@ function onunload() {
     const { roamZIndexManager } = require('./utils/roamZIndexManager');
     roamZIndexManager.removeZIndexFix();
   } catch (error) {
-    console.error('🔧 Roam Memo: 清理层级管理器失败:', error);
+          console.error('🔧 Memo Enhanced: 清理层级管理器失败:', error);
   }
 
   if (container) {

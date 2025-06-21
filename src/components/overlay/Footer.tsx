@@ -136,9 +136,9 @@ const Footer = ({
         onKeyDown: onPrevClick,
       },
       {
-        combo: 'F',
+        combo: 'X',
         global: true,
-        label: 'Grade 0',
+        label: 'Forgot (Grade 0)',
         onKeyDown: () => gradeFn(0),
         disabled: reviewMode === ReviewModes.FixedInterval,
       },
@@ -373,10 +373,10 @@ const GradingControlsWrapper = ({
       <div className="flex-shrink-0">
         <SetIntervalToggleWrapper 
           className="flex items-center justify-center gap-1 bg-gray-50 px-2 py-1 rounded-md border border-gray-200" 
-          style={{ minWidth: '80px' }}
+          style={{ minWidth: '100px' }}
         >
           <span className={`text-xs ${!isFixedIntervalMode ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>
-            S
+            AUTO
           </span>
           <Blueprint.Switch
             className="mb-0"
@@ -386,7 +386,7 @@ const GradingControlsWrapper = ({
             data-testid="review-mode-switch"
           />
           <span className={`text-xs ${isFixedIntervalMode ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>
-            F
+            FIX
           </span>
         </SetIntervalToggleWrapper>
       </div>
@@ -575,7 +575,7 @@ const SpacedIntervalModeControls = ({
       >
         Forgot{' '}
         <span className="ml-2">
-          <ButtonTags>F</ButtonTags>
+          <ButtonTags>X</ButtonTags>
         </span>
       </ControlButton>
       <ControlButton

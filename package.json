@@ -1,7 +1,7 @@
 {
-  "name": "roam-memo",
+  "name": "memo-enhanced",
   "version": "21",
-  "description": "Roam Spaced Repetition Plugin",
+  "description": "Memo Enhanced - 强化版间隔重复插件",
   "author": "Jose Browne <josebrowne@gmail.com> (http://josebrowne.com/)",
   "scripts": {
     "start": "npm run dev",
