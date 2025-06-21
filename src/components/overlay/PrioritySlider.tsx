@@ -102,7 +102,7 @@ const PrioritySlider: React.FC<PrioritySliderProps> = ({
   priority, 
   onPriorityChange, 
   disabled,
-  allCardsCount
+  allCardsCount,
 }) => {
   // 滑块值到排名的转换（左侧=低优先级，右侧=高优先级）
   const sliderValueToRank = React.useCallback((sliderValue: number, totalCards: number) => {
@@ -166,10 +166,12 @@ const PrioritySlider: React.FC<PrioritySliderProps> = ({
         color: '#7f8c8d'
       }}>
         <span>低优先级（第{allCardsCount}名）</span>
-        <span style={{ fontWeight: 'bold', color: '#2c3e50' }}>
-          当前排名：第{priority}名
-          {allCardsCount > 0 && ` / 共${allCardsCount}张卡片`}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <span style={{ fontWeight: 'bold', color: '#2c3e50' }}>
+            当前总排名：第{priority}名
+            {allCardsCount > 0 && ` / 共${allCardsCount}张卡片`}
+          </span>
+        </div>
         <span>高优先级（第1名）</span>
       </div>
     </PriorityContainer>

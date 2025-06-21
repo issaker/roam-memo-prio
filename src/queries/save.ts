@@ -196,8 +196,13 @@ export const loadCardRankings = async ({
       heading: 3,
     });
 
-    const dataBlocks = await getChildBlocksByUid(dataBlockUid);
-    const priorityBlock = dataBlocks?.find(block => 
+    // 查找"**Priority Rankings**"容器block
+    const priorityContainerUid = getChildBlock(dataBlockUid, '**Priority Rankings**');
+    if (!priorityContainerUid) return [];
+
+    // 在容器中查找priority-ranking数据
+    const containerBlocks = await getChildBlocksByUid(priorityContainerUid);
+    const priorityBlock = containerBlocks?.find(block => 
       block.string && block.string.startsWith('priority-ranking::')
     );
 
@@ -219,6 +224,7 @@ export const loadCardRankings = async ({
       })
       .filter(uid => uid);
     
+    console.log('🎯 协同排名系统 - 从容器中成功读取排名列表:', rankings.length, '个卡片');
     return rankings;
   } catch (error) {
     console.error('协同排名系统 - 读取排名列表失败:', error);
@@ -244,8 +250,20 @@ export const saveCardRankings = async ({
       heading: 3,
     });
 
-    const dataBlocks = await getChildBlocksByUid(dataBlockUid);
-    const existingRankingBlock = dataBlocks?.find(block => 
+    // 获取或创建"Priority Rankings"容器block
+    const priorityContainerUid = await getOrCreateChildBlock(
+      dataBlockUid, 
+      '**Priority Rankings**', // 使用粗体格式标识
+      0, // 放在data block的最前面
+      { 
+        open: false,
+        // 移除heading属性，使用普通block
+      }
+    );
+
+    // 在容器中查找现有的priority-ranking数据
+    const containerBlocks = await getChildBlocksByUid(priorityContainerUid);
+    const existingRankingBlock = containerBlocks?.find(block => 
       block.string && block.string.startsWith('priority-ranking::')
     );
     
@@ -254,14 +272,18 @@ export const saveCardRankings = async ({
     const fullString = `priority-ranking:: ${rankingString}`;
     
     if (existingRankingBlock) {
+      // 更新现有的ranking block
       await window.roamAlphaAPI.updateBlock({
         block: {
           uid: existingRankingBlock.uid,
           string: fullString
         }
       });
+      console.log('🎯 协同排名系统 - 在容器中更新排名列表:', rankings.length, '个卡片');
     } else {
-      await createChildBlock(dataBlockUid, fullString, -1);
+      // 在容器中创建新的ranking block
+      await createChildBlock(priorityContainerUid, fullString, -1);
+      console.log('🎯 协同排名系统 - 在容器中创建排名列表:', rankings.length, '个卡片');
     }
   } catch (error) {
     console.error('协同排名系统 - 保存排名列表失败:', error);

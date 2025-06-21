@@ -199,6 +199,8 @@ const PracticeOverlay = ({
     return rank;
   }, [currentCardRefUid, priorityOrder, allCardsCount, rankingChanges, defaultPriority]);
 
+
+
   // 🚀 DEBUG: 添加调试信息 (仅在开发环境)
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {

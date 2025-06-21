@@ -465,14 +465,14 @@ const FixedIntervalModeControls = ({
   isIntervalEditorOpen: boolean;
   toggleIntervalEditorOpen: () => void;
   intervalEstimates: IntervalEstimates;
-}): JSX.Element | undefined => {
+}): JSX.Element | null => {
   const { intervalMultiplier, intervalMultiplierType } = React.useContext(MainContext);
   const onInteractionhandler = (nextState) => {
     if (!nextState && isIntervalEditorOpen) toggleIntervalEditorOpen();
   };
   if (!intervalEstimates) {
     console.error('Interval estimates not set');
-    return;
+    return null;
   }
 
   return (
@@ -523,10 +523,10 @@ const SpacedIntervalModeControls = ({
   activeButtonKey: string;
   gradeFn: (grade: number) => void;
   intervalEstimates: IntervalEstimates;
-}) => {
+}): JSX.Element | null => {
   if (!intervalEstimates) {
     console.error('Interval estimates not set');
-    return;
+    return null;
   }
 
   return (
