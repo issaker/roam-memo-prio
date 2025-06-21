@@ -91,42 +91,27 @@ const PracticeOverlay = ({
   const newCardsUids = todaySelectedTag.newUids;
   const dueCardsUids = todaySelectedTag.dueUids;
   
-  // 🚀 FIXED: 按优先级排名合并队列，而不是简单的due+new顺序
+  // 按优先级排名合并队列
   const practiceCardUids = React.useMemo(() => {
-    if (priorityOrder.length === 0) {
-      // 如果没有优先级排名，回退到原有逻辑
-      return [...dueCardsUids, ...newCardsUids];
-    }
-    
-    // 合并所有卡片
     const allCards = [...dueCardsUids, ...newCardsUids];
     
-    // 按优先级排名排序
-    const sortedCards = allCards.sort((a, b) => {
+    if (priorityOrder.length === 0) {
+      return allCards;
+    }
+    
+    return allCards.sort((a, b) => {
       const aIndex = priorityOrder.indexOf(a as string);
       const bIndex = priorityOrder.indexOf(b as string);
       
-      // 如果两个都在排名列表中，按排名排序
       if (aIndex !== -1 && bIndex !== -1) {
         return aIndex - bIndex;
       }
       
-      // 排名列表中的卡片优先于不在列表中的卡片
       if (aIndex !== -1) return -1;
       if (bIndex !== -1) return 1;
       
-      // 都不在排名列表中，保持原有顺序
       return 0;
     });
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🎯 [队列排序] due卡片:', dueCardsUids);
-      console.log('🎯 [队列排序] new卡片:', newCardsUids); 
-      console.log('🎯 [队列排序] 最终队列:', sortedCards);
-      console.log('🎯 [队列排序] 优先级排名:', priorityOrder);
-    }
-    
-    return sortedCards;
   }, [dueCardsUids, newCardsUids, priorityOrder]);
   const renderMode = todaySelectedTag.renderMode;
 
@@ -138,9 +123,7 @@ const PracticeOverlay = ({
   const currentCardRefUid = practiceCardUids[currentIndex] as string | undefined;
 
   const sessions = React.useMemo(() => {
-    const sessions = currentCardRefUid ? practiceData[currentCardRefUid] : [];
-    if (!sessions) return [];
-    return sessions;
+    return currentCardRefUid ? practiceData[currentCardRefUid] || [] : [];
   }, [currentCardRefUid, practiceData]);
   const { currentCardData, reviewMode, setReviewModeOverride } = useCurrentCardData({
     currentCardRefUid,
@@ -150,7 +133,6 @@ const PracticeOverlay = ({
   const totalCardsCount = todaySelectedTag.new + todaySelectedTag.due;
   const hasCards = totalCardsCount > 0;
   
-  // 🚀 FIXED: 完成状态检查 - 使用简单的逻辑避免循环依赖
   const isDone = todaySelectedTag.status === CompletionStatus.Finished || !currentCardData;
 
   const newFixedSessionDefaults = React.useMemo(
@@ -166,49 +148,28 @@ const PracticeOverlay = ({
         (newFixedSessionDefaults.intervalMultiplierType as IntervalMultiplierType)
     );
 
-  // 🎯 协同排名系统状态管理
+  // 协同排名系统状态管理
   const [rankingChanges, setRankingChanges] = React.useState<Record<string, number>>({});
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
   
-  // 🎯 获取当前卡片的排名（从协同排名列表中计算）
+  // 获取当前卡片的排名
   const currentCardRank = React.useMemo(() => {
     if (!currentCardRefUid) {
-      // 🎯 FIXED: 没有卡片时，使用默认优先级计算位置
-      const defaultRank = Math.max(1, Math.ceil(allCardsCount * (1 - defaultPriority / 100)));
-      return defaultRank;
+      return Math.max(1, Math.ceil(allCardsCount * (1 - defaultPriority / 100)));
     }
     
-    // 首先检查是否有本地未保存的变更
+    // 检查是否有本地未保存的变更
     if (rankingChanges[currentCardRefUid] !== undefined) {
       return rankingChanges[currentCardRefUid];
     }
     
-    // 🚀 FIXED: 完全依赖priorityOrder作为唯一数据源
     const index = priorityOrder.indexOf(currentCardRefUid);
-    
-    if (index === -1) {
-      // 🚀 FIXED: 如果卡片不在priorityOrder中，说明预填充失败，记录错误
-      if (process.env.NODE_ENV === 'development') {
-        console.error('❌ [排名计算] 卡片不在priorityOrder中，预填充可能失败:', currentCardRefUid);
-      }
-      return 1; // 返回最高优先级作为安全备用
-    }
-    
-    // 🚀 正常情况：使用在排名列表中的位置
-    const rank = index + 1; // 排名从1开始
-    return rank;
+    return index === -1 ? 1 : index + 1;
   }, [currentCardRefUid, priorityOrder, allCardsCount, rankingChanges, defaultPriority]);
 
 
 
-  // 🚀 DEBUG: 添加调试信息 (仅在开发环境)
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🎯 [排名计算] 当前卡片:', currentCardRefUid);
-      console.log('🎯 [排名计算] priorityOrder:', priorityOrder);
-      console.log('🎯 [排名计算] 计算排名:', currentCardRank);
-    }
-  }, [currentCardRefUid, priorityOrder, currentCardRank]);
+
 
   // 处理排名变更 - 只更新本地状态，不立即保存
   const handleRankingChange = React.useCallback((newRank: number) => {
@@ -256,19 +217,16 @@ const PracticeOverlay = ({
   const shouldShowAnswerFirst =
     renderMode === RenderMode.AnswerFirst && hasBlockChildrenUids && !showAnswers;
 
-  // 🚀 FLASH FIX V3: 超简化状态管理 - 卡片切换时总是重置为隐藏状态
+  // 卡片切换时重置答案显示状态
   React.useEffect(() => {
-    // 每次卡片切换都重置为隐藏答案
     setShowAnswers(false);
   }, [currentCardRefUid]);
 
-  // 🚀 FLASH FIX V3: 检查是否需要自动显示答案（无子块且无cloze）
+  // 自动显示答案（无子块且无cloze）
   React.useEffect(() => {
-    // 只有在所有数据都已加载且确认无子块无cloze时才自动显示答案
     if (currentCardRefUid && !blockInfoLoading) {
       const shouldAutoShow = !hasBlockChildren && !hasBlockChildrenUids && !hasCloze;
       if (shouldAutoShow && !showAnswers) {
-        // 小延迟确保DOM完全渲染
         const timer = setTimeout(() => setShowAnswers(true), 100);
         return () => clearTimeout(timer);
       }
@@ -288,44 +246,39 @@ const PracticeOverlay = ({
     }
   };
 
-  // When sessions are updated, reset current index (使用 useMemo 来避免不必要的重置)
-  const shouldResetIndex = React.useMemo(() => {
-    return Object.keys(practiceData).length > 0;
-  }, [practiceData]);
 
+
+  // When practice queue changes, reset current index
+  const previousQueueLength = React.useRef(practiceCardUids.length);
+  
   React.useEffect(() => {
-    if (shouldResetIndex) {
+    // 只在队列长度变化时重置索引
+    if (practiceCardUids.length !== previousQueueLength.current) {
       setCurrentIndex(0);
+      previousQueueLength.current = practiceCardUids.length;
     }
-  }, [shouldResetIndex]);
+  }, [practiceCardUids.length]);
 
   const onPracticeClick = React.useCallback(
     (gradeData) => {
       if (isDone) return;
       
-      // 🎯 NEW: 新优先级系统不需要在练习时传递优先级数据
-      // 优先级在专门的排序系统中管理，不与学习数据混合
       const practiceProps = {
         ...currentCardData,
         ...gradeData,
         intervalMultiplier,
         intervalMultiplierType,
-        // 移除priority字段，因为新系统独立管理优先级
       };
 
-      // 🚀 FIXED: 移除练习时的优先级保存，只保存学习数据
       const afterPractice = async () => {
         try {
           await handlePracticeClick(practiceProps);
-          // 🚀 移除了优先级保存逻辑，将在滑块消失时批量保存
         } catch (error) {
           console.error('练习数据保存失败:', error);
         }
       };
       
       afterPractice();
-      
-      // 🚀 FLASH FIX V3: 简单的索引递增，状态管理已在useEffect中处理
       setCurrentIndex(currentIndex + 1);
     },
     [
@@ -335,21 +288,17 @@ const PracticeOverlay = ({
       currentCardData,
       intervalMultiplier,
       intervalMultiplierType,
-      // 🚀 移除了优先级相关的依赖
     ]
   );
 
   const onSkipClick = React.useCallback(() => {
     if (isDone) return;
-
-    // 🚀 FLASH FIX V3: 简单的索引递增，状态管理已在useEffect中处理
     setCurrentIndex(currentIndex + 1);
   }, [currentIndex, isDone]);
 
   const onPrevClick = React.useCallback(() => {
     if (isFirst) return;
 
-    // 🚀 FLASH FIX V3: 简单的索引递减，状态管理已在useEffect中处理
     setCurrentIndex(currentIndex - 1);
   }, [currentIndex, isFirst]);
 
@@ -394,7 +343,7 @@ const PracticeOverlay = ({
   // 解决memo窗口中编辑时换行切换block导致的焦点丢失问题
   useFocusFix(isOpen);
 
-  // 🚀 NEW: 在滑块消失时批量保存优先级数据
+  // 在滑块消失时批量保存优先级数据
   const shouldShowSlider = !isDone && hasCards;
   const prevShouldShowSlider = React.useRef(shouldShowSlider);
   
@@ -402,22 +351,15 @@ const PracticeOverlay = ({
     // 检测滑块从显示变为隐藏（完成复习、窗口关闭等）
     if (prevShouldShowSlider.current && !shouldShowSlider) {
       if (Object.keys(rankingChanges).length > 0) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🎯 [优先级保存] 滑块消失，批量保存优先级变更:', rankingChanges);
-        }
-        
         bulkSaveRankingChanges({ 
           rankingChanges, 
           dataPageTitle: dataPageTitle || 'roam/memo',
           allCardUids
         }).then(() => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('🎯 [优先级保存] 批量保存成功');
-          }
           setRankingChanges({}); // 清除已保存的变更
           setHasUnsavedChanges(false);
         }).catch(error => {
-          console.error('🎯 [优先级保存] 批量保存失败:', error);
+          console.error('优先级保存失败:', error);
         });
       }
     }
@@ -460,6 +402,7 @@ const PracticeOverlay = ({
           showBreadcrumbs={showBreadcrumbs}
           setShowBreadcrumbs={setShowBreadcrumbs}
           isCramming={isCramming}
+          practiceCardUids={practiceCardUids}
         />
 
         <DialogBody
@@ -798,14 +741,16 @@ const Header = ({
   showBreadcrumbs,
   setShowBreadcrumbs,
   isCramming,
+  practiceCardUids,
 }) => {
   const { selectedTag, today, currentIndex } = useSafeContext(MainContext);
   const todaySelectedTag = today.tags[selectedTag];
   const completedTodayCount = todaySelectedTag.completed;
-  const remainingTodayCount = todaySelectedTag.due + todaySelectedTag.new;
-
-  const currentIndexDelta = isCramming ? 0 : completedTodayCount;
-  const currentDisplayCount = currentIndexDelta + currentIndex + 1;
+  
+  // 计算显示进度
+  const queueLength = practiceCardUids ? practiceCardUids.length : 0;
+  const todayTotalTarget = isCramming ? queueLength : completedTodayCount + queueLength;
+  const currentDisplayCount = isCramming ? currentIndex + 1 : completedTodayCount + currentIndex + 1;
 
   return (
     <HeaderWrapper className={className} tabIndex={0}>
@@ -842,7 +787,7 @@ const Header = ({
           <span data-testid="display-count-current">{isDone ? 0 : currentDisplayCount}</span>
           <span className="opacity-50 mx-1">/</span>
           <span className="opacity-50" data-testid="display-count-total">
-            {isDone ? 0 : remainingTodayCount}
+            {isDone ? 0 : todayTotalTarget}
           </span>
         </span>
         <button

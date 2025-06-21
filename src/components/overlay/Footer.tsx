@@ -206,7 +206,7 @@ const Footer = ({
       onKeyUp={handleKeyUp}
     >
       <FooterActionsWrapper
-        className="bp3-dialog-footer-actions flex-wrap gap-4 justify-center sm:justify-evenly w-full mx-5  my-3"
+        className="bp3-dialog-footer-actions flex items-center justify-between w-full mx-5 my-3"
         data-testid="footer-actions-wrapper"
       >
         {isDone || !hasCards ? (
@@ -238,44 +238,64 @@ const Footer = ({
 };
 
 const AnswerHiddenControls = ({ activateButtonFn, showAnswerFn, activeButtonKey }) => (
-  // @ts-ignore
-  <ControlButton
-    className="text-base font-medium py-1"
-    intent="none"
-    onClick={() => {
-      activateButtonFn('space-button', showAnswerFn);
-    }}
-    active={activeButtonKey === 'space-button'}
-    outlined
-  >
-    Show Answer{' '}
-    <span className="ml-2">
-      <ButtonTags>SPACE</ButtonTags>
-    </span>
-  </ControlButton>
+  <>
+    {/* 左区域：空 */}
+    <div className="flex-shrink-0"></div>
+    
+    {/* 中区域：Show Answer按钮 */}
+    <div className="flex-1 flex justify-center">
+      {/* @ts-ignore */}
+      <ControlButton
+        className="text-base font-medium py-1"
+        intent="none"
+        onClick={() => {
+          activateButtonFn('space-button', showAnswerFn);
+        }}
+        active={activeButtonKey === 'space-button'}
+        outlined
+      >
+        Show Answer{' '}
+        <span className="ml-2">
+          <ButtonTags>SPACE</ButtonTags>
+        </span>
+      </ControlButton>
+    </div>
+    
+    {/* 右区域：空 */}
+    <div className="flex-shrink-0"></div>
+  </>
 );
 
 const FinishedControls = ({ onStartCrammingClick, onCloseCallback }) => {
   return (
     <>
-      <Tooltip content="Review all cards without waiting for scheduling" placement="top">
+      {/* 左区域：空 */}
+      <div className="flex-shrink-0"></div>
+      
+      {/* 中区域：完成状态按钮 */}
+      <div className="flex-1 flex justify-center gap-4">
+        <Tooltip content="Review all cards without waiting for scheduling" placement="top">
+          <Blueprint.Button
+            className="text-base font-medium py-1"
+            intent="none"
+            onClick={onStartCrammingClick}
+            outlined
+          >
+            Continue Cramming
+          </Blueprint.Button>
+        </Tooltip>
         <Blueprint.Button
           className="text-base font-medium py-1"
-          intent="none"
-          onClick={onStartCrammingClick}
+          intent="primary"
+          onClick={onCloseCallback}
           outlined
         >
-          Continue Cramming
+          Close
         </Blueprint.Button>
-      </Tooltip>
-      <Blueprint.Button
-        className="text-base font-medium py-1"
-        intent="primary"
-        onClick={onCloseCallback}
-        outlined
-      >
-        Close
-      </Blueprint.Button>
+      </div>
+      
+      {/* 右区域：空 */}
+      <div className="flex-shrink-0"></div>
     </>
   );
 };
@@ -313,50 +333,63 @@ const GradingControlsWrapper = ({
   const isFixedIntervalMode = reviewMode === ReviewModes.FixedInterval;
   return (
     <>
-      <ControlButton
-        key="skip-button"
-        className="text-base font-medium py-1"
-        wrapperClassName={`${isFixedIntervalMode ? 'sm:mr-auto' : ''}`}
-        tooltipText={`Skip for now`}
-        onClick={() => skipFn()}
-        active={activeButtonKey === 'skip-button'}
-        outlined
-      >
-        Skip{' '}
-        <span className="ml-2">
-          <ButtonTags>S</ButtonTags>
-        </span>
-      </ControlButton>
-      {isFixedIntervalMode ? (
-        <FixedIntervalModeControls
-          activeButtonKey={activeButtonKey}
-          intervalPractice={intervalPractice}
-          isIntervalEditorOpen={isIntervalEditorOpen}
-          toggleIntervalEditorOpen={toggleIntervalEditorOpen}
-          intervalEstimates={intervalEstimates}
-        />
-      ) : (
-        <SpacedIntervalModeControls
-          activeButtonKey={activeButtonKey}
-          gradeFn={gradeFn}
-          intervalEstimates={intervalEstimates}
-        />
-      )}
-      <SetIntervalToggleWrapper className={`${isFixedIntervalMode ? 'sm:ml-auto' : ''}`}>
-        {/* @ts-ignore */}
+      {/* 左区域：Skip按钮 - 占据固定空间 */}
+      <div className="flex-shrink-0">
         <ControlButton
-          icon={isFixedIntervalMode ? 'calendar' : 'history'}
+          key="skip-button"
           className="text-base font-medium py-1"
-          intent="none"
-          tooltipText={isFixedIntervalMode ? 'Spaced Interval Mode' : 'Fixed Interval Mode'}
-          onClick={() => {
-            activateButtonFn('space-button', toggleReviewMode);
-          }}
-          data-testid="review-mode-button"
-          active={activeButtonKey === 'space-button'}
+          tooltipText={`Skip for now`}
+          onClick={() => skipFn()}
+          active={activeButtonKey === 'skip-button'}
           outlined
-        ></ControlButton>
-      </SetIntervalToggleWrapper>
+        >
+          Skip{' '}
+          <span className="ml-2">
+            <ButtonTags>S</ButtonTags>
+          </span>
+        </ControlButton>
+      </div>
+      
+      {/* 中区域：功能按钮 - 自适应空间 */}
+      <div className="flex-1 flex justify-center gap-2 flex-wrap">
+        {isFixedIntervalMode ? (
+          <FixedIntervalModeControls
+            activeButtonKey={activeButtonKey}
+            intervalPractice={intervalPractice}
+            isIntervalEditorOpen={isIntervalEditorOpen}
+            toggleIntervalEditorOpen={toggleIntervalEditorOpen}
+            intervalEstimates={intervalEstimates}
+          />
+        ) : (
+          <SpacedIntervalModeControls
+            activeButtonKey={activeButtonKey}
+            gradeFn={gradeFn}
+            intervalEstimates={intervalEstimates}
+          />
+        )}
+      </div>
+      
+      {/* 右区域：开关按钮 - 固定大小 */}
+      <div className="flex-shrink-0">
+        <SetIntervalToggleWrapper 
+          className="flex items-center justify-center gap-1 bg-gray-50 px-2 py-1 rounded-md border border-gray-200" 
+          style={{ minWidth: '80px' }}
+        >
+          <span className={`text-xs ${!isFixedIntervalMode ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>
+            S
+          </span>
+          <Blueprint.Switch
+            className="mb-0"
+            style={{ transform: 'scale(0.9)' }}
+            checked={isFixedIntervalMode}
+            onChange={toggleReviewMode}
+            data-testid="review-mode-switch"
+          />
+          <span className={`text-xs ${isFixedIntervalMode ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>
+            F
+          </span>
+        </SetIntervalToggleWrapper>
+      </div>
     </>
   );
 };
