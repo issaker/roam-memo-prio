@@ -196,20 +196,44 @@ export const loadCardRankings = async ({
       heading: 3,
     });
 
-    // 查找"**Priority Rankings**"容器block
-    const priorityContainerUid = getChildBlock(dataBlockUid, '**Priority Rankings**');
-    if (!priorityContainerUid) return [];
+    // 查找"Priority Rankings"容器block（支持两种格式）
+    let priorityContainerUid = getChildBlock(dataBlockUid, 'Priority Rankings');
+    if (!priorityContainerUid) {
+      // 兼容旧的粗体格式
+      priorityContainerUid = getChildBlock(dataBlockUid, '**Priority Rankings**');
+    }
+    
+    if (!priorityContainerUid) {
+      console.log('🎯 协同排名系统 - 容器block不存在，返回空列表');
+      return [];
+    }
+
+    console.log('🎯 协同排名系统 - 找到容器block:', priorityContainerUid);
 
     // 在容器中查找priority-ranking数据
     const containerBlocks = await getChildBlocksByUid(priorityContainerUid);
+    
+    if (!containerBlocks || containerBlocks.length === 0) {
+      console.log('🎯 协同排名系统 - 容器为空，返回空列表');
+      return [];
+    }
+
+    console.log('🎯 协同排名系统 - 容器中包含blocks:', containerBlocks.map(b => b.string));
+
     const priorityBlock = containerBlocks?.find(block => 
       block.string && block.string.startsWith('priority-ranking::')
     );
 
-    if (!priorityBlock) return [];
+    if (!priorityBlock) {
+      console.log('🎯 协同排名系统 - 未找到priority-ranking数据block');
+      return [];
+    }
 
     const orderString = priorityBlock.string.replace('priority-ranking::', '').trim();
-    if (!orderString) return [];
+    if (!orderString) {
+      console.log('🎯 协同排名系统 - priority-ranking数据为空');
+      return [];
+    }
 
     // 支持双重括号格式的解析：((uid1)),((uid2)),((uid3))
     const rankings = orderString
@@ -250,19 +274,39 @@ export const saveCardRankings = async ({
       heading: 3,
     });
 
+    console.log('🎯 协同排名系统 - 准备保存到data block:', dataBlockUid);
+
+    // 检查并迁移旧的priority-ranking数据（直接在data block下的）
+    const oldRankingBlockUid = getChildBlock(dataBlockUid, 'priority-ranking::', { exactMatch: false });
+    if (oldRankingBlockUid) {
+      console.log('🎯 协同排名系统 - 发现旧数据，正在删除:', oldRankingBlockUid);
+      await window.roamAlphaAPI.deleteBlock({ block: { uid: oldRankingBlockUid } });
+    }
+
+    // 检查并删除旧的粗体格式容器
+    const oldBoldContainerUid = getChildBlock(dataBlockUid, '**Priority Rankings**');
+    if (oldBoldContainerUid) {
+      console.log('🎯 协同排名系统 - 发现旧粗体容器，正在删除:', oldBoldContainerUid);
+      await window.roamAlphaAPI.deleteBlock({ block: { uid: oldBoldContainerUid } });
+    }
+
     // 获取或创建"Priority Rankings"容器block
     const priorityContainerUid = await getOrCreateChildBlock(
       dataBlockUid, 
-      '**Priority Rankings**', // 使用粗体格式标识
+      'Priority Rankings', // 使用普通block文本
       0, // 放在data block的最前面
       { 
         open: false,
-        // 移除heading属性，使用普通block
+        // 不使用heading属性，保持为普通block
       }
     );
 
+    console.log('🎯 协同排名系统 - 容器block UID:', priorityContainerUid);
+
     // 在容器中查找现有的priority-ranking数据
     const containerBlocks = await getChildBlocksByUid(priorityContainerUid);
+    console.log('🎯 协同排名系统 - 容器中现有blocks:', containerBlocks?.map(b => b.string));
+
     const existingRankingBlock = containerBlocks?.find(block => 
       block.string && block.string.startsWith('priority-ranking::')
     );
@@ -270,6 +314,8 @@ export const saveCardRankings = async ({
     // 使用双重括号格式：((uid1)),((uid2)),((uid3))
     const rankingString = rankings.map(uid => `((${uid}))`).join(',');
     const fullString = `priority-ranking:: ${rankingString}`;
+    
+    console.log('🎯 协同排名系统 - 准备保存数据，卡片数量:', rankings.length);
     
     if (existingRankingBlock) {
       // 更新现有的ranking block
@@ -282,9 +328,11 @@ export const saveCardRankings = async ({
       console.log('🎯 协同排名系统 - 在容器中更新排名列表:', rankings.length, '个卡片');
     } else {
       // 在容器中创建新的ranking block
-      await createChildBlock(priorityContainerUid, fullString, -1);
-      console.log('🎯 协同排名系统 - 在容器中创建排名列表:', rankings.length, '个卡片');
+      const newBlockUid = await createChildBlock(priorityContainerUid, fullString, -1);
+      console.log('🎯 协同排名系统 - 在容器中创建排名列表:', rankings.length, '个卡片, UID:', newBlockUid);
     }
+    
+    console.log('🎯 协同排名系统 - 保存操作完成');
   } catch (error) {
     console.error('协同排名系统 - 保存排名列表失败:', error);
     throw error;
