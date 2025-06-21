@@ -1,8 +1,15 @@
 # Memo Enhanced - 优化版间隔重复插件
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/1279335/189250105-656e6ba3-7703-46e6-bc71-ee8c5f3e39ab.gif" alt="Demo Preview" width="600">
+  <strong>原版本演示：</strong><br/>
+  <img src="https://user-images.githubusercontent.com/1279335/189250105-656e6ba3-7703-46e6-bc71-ee8c5f3e39ab.gif" alt="原版本演示" width="600">
 </p>
+
+<p align="center">
+  <strong>优化版本演示：</strong><br/>
+  <img src="https://github.com/user-attachments/assets/ed9e00c1-558a-4550-8001-1145c8594967" alt="优化版本演示" width="600">
+</p>
+
 
 > 🙏 **致谢**：本项目基于 [digitalmaster/roam-memo](https://github.com/digitalmaster/roam-memo) 开发，感谢原作者 [@digitalmaster](https://github.com/digitalmaster) 的杰出工作！同时特别感谢 [L-M-Sherlock (Jarrett Ye)](https://github.com/L-M-Sherlock) 老师对渐进阅读学习原理和方法的无私推广，受益匪浅。
 
