@@ -12,7 +12,13 @@ const createAndRenderContainer = () => {
   const newContainerElm = document.createElement('div');
   newContainerElm.id = container_id;
   newContainerElm.classList.add('log-button'); // match style
-  siblingElm.parentNode.insertBefore(newContainerElm, siblingElm.nextSibling);
+  
+  if (siblingElm && siblingElm.parentNode) {
+    siblingElm.parentNode.insertBefore(newContainerElm, siblingElm.nextSibling);
+  } else {
+    // 如果找不到预期位置，添加到body
+    document.body.appendChild(newContainerElm);
+  }
 
   return newContainerElm;
 };

@@ -13,7 +13,7 @@ import {
 } from '~/queries/today';
 import { getChildBlocksOnPage } from './utils';
 // 🎯 FIXED: 直接导入协同排名系统函数，避免动态导入问题
-import { loadCardRankings } from '~/queries/save';
+import { loadCardRankings, saveCardRankings } from '~/queries/save';
 
 // 🎯 改进：使用模块级状态而非全局状态，减少竞态条件风险
 const prefillState = {
@@ -143,7 +143,6 @@ const updatePriorityOrderWithSettings = async (
     }
     
     // 6. 保存更新后的排序列表
-    const { saveCardRankings } = await import('~/queries/save');
     await saveCardRankings({ 
       dataPageTitle, 
       rankings: updatedPriorityOrder 
